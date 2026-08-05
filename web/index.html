@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#e9dfcb" />
+    <meta name="description" content="一张献给声音与记忆的纸上小刊。" />
+    <title>照片之外 · 纸上小刊</title>
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <main class="zine-shell">
+      <header class="masthead" aria-label="页面标题">
+        <p class="issue">NO. 01 / AUG. 2026</p>
+        <p class="credit">A SMALL ZINE FOR A VOICE</p>
+      </header>
+
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">一张献给声音与记忆的纸上小刊</p>
+        <h1 id="page-title">照片之外<br /><em>声音仍在</em></h1>
+        <p class="intro">轻触一张卡，翻开一段留白。<br />这里的每一次播放，都从你开始。</p>
+
+        <button class="sound-control" type="button" aria-pressed="false" aria-label="播放临时背景音乐">
+          <span class="sound-disc" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="sound-copy"><b>PLAY</b><small>临时背景音乐</small></span>
+        </button>
+        <p class="audio-note">占位音频：本地临时 BGM。获授权后替换为《照片》。</p>
+      </section>
+
+      <section class="tape-line" aria-hidden="true"><span>KEEP THE LIGHT / KEEP THE SPACE /</span></section>
+
+      <section class="gallery" aria-labelledby="gallery-title">
+        <div class="section-heading">
+          <p class="issue">FIVE FRAGMENTS</p>
+          <h2 id="gallery-title">贴图墙</h2>
+          <p>点按任意一张，靠近一点看。</p>
+        </div>
+
+        <div class="cards">
+          <button class="poster-card card-a" type="button" data-poster="./assets/images/nfc-zine-9920-glass-weather.png" data-label="玻璃天气" data-lines="玻璃映出天气|也映出未说的话|风从指尖经过">
+            <img src="./assets/images/nfc-zine-9920-glass-weather.png" alt="玻璃天气主题纸刊海报" />
+            <span>01 / 玻璃天气</span>
+          </button>
+          <button class="poster-card card-b" type="button" data-poster="./assets/images/nfc-zine-9921-last-note.png" data-label="最后一张纸条" data-lines="纸条没有署名|折痕却记得|那一次回头">
+            <img src="./assets/images/nfc-zine-9921-last-note.png" alt="最后一张纸条主题纸刊海报" />
+            <span>02 / 最后一张纸条</span>
+          </button>
+          <button class="poster-card card-c" type="button" data-poster="./assets/images/nfc-zine-9922-turning-back.png" data-label="回望的瞬间" data-lines="我们没有停下|只是回头看了一眼|夜就亮了">
+            <img src="./assets/images/nfc-zine-9922-turning-back.png" alt="回望的瞬间主题纸刊海报" />
+            <span>03 / 回望</span>
+          </button>
+          <button class="poster-card card-d" type="button" data-poster="./assets/images/nfc-zine-9923-quiet-stage.png" data-label="安静的舞台" data-lines="灯光落下以后|舞台仍然安静|像一封没有寄出的信">
+            <img src="./assets/images/nfc-zine-9923-quiet-stage.png" alt="安静的舞台主题纸刊海报" />
+            <span>04 / 安静的舞台</span>
+          </button>
+          <button class="poster-card card-e" type="button" data-poster="./assets/images/nfc-zine-9924-blue-between-words.png" data-label="词语之间的蓝" data-lines="词语之间有蓝色|它不急着开口|只等你靠近">
+            <img src="./assets/images/nfc-zine-9924-blue-between-words.png" alt="词语之间的蓝主题纸刊海报" />
+            <span>05 / 词语之间的蓝</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="note" aria-label="创作说明">
+        <p class="handwriting">把未说完的话，放进纸的背面。</p>
+        <p>本页面为非商业视觉原型。海报为原创生成视觉；正式发布前，照片、歌曲、歌词与字体均须取得相应授权。</p>
+      </section>
+    </main>
+
+    <dialog class="lightbox" aria-label="海报预览">
+      <button class="close-lightbox" type="button" aria-label="关闭预览">×</button>
+      <img src="" alt="" />
+      <p></p>
+      <div class="handwritten-lines" aria-live="polite" aria-label="手写文字逐行显示"></div>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+    <script src="./scripts/app.js" defer></script>
+  </body>
+</html>

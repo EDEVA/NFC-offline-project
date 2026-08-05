@@ -1,0 +1,16 @@
+# 照片之外 · NFC GitHub Pages 原型
+
+面向 iOS / Android 浏览器的静态单页。NFC 标签应写入 GitHub Pages 的 HTTPS 地址，而不是媒体文件。
+
+## 发布
+
+1. 新建 GitHub 仓库并推送本项目到 `main` 分支。
+2. 在仓库 **Settings → Pages** 选择 **GitHub Actions** 作为发布来源。
+3. Actions 成功后，获取 `https://<用户名>.github.io/<仓库名>/`。
+4. 用 NFC 写卡工具将该 HTTPS URL 写为 NDEF URL 记录，先以手机实测后再锁卡。
+
+## 素材替换
+
+- 当前 `web/assets/images/` 的三张图是原创生成的纸刊风格原型；上线前仍需审核肖像与使用范围。
+- 播放按钮目前使用 `web/assets/music/` 中由用户提供的临时本地 BGM。不要直接加入《照片》或歌词；获得歌曲、歌词、录音和公开网页分发许可后，再替换为本地授权音频文件与获授权文案。
+- 不要把任何密钥、个人信息或未授权媒体提交到公开仓库。
