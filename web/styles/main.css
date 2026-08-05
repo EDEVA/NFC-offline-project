@@ -29,7 +29,7 @@ button { font: inherit; }
 
 .hero { padding-top: clamp(70px, 16vh, 140px); padding-bottom: 72px; position: relative; }
 .eyebrow { color: var(--cobalt); margin-bottom: 18px; }
-h1 { margin: 0; max-width: 7em; font-size: clamp(56px, 17vw, 96px); line-height: .96; letter-spacing: -.08em; font-weight: 500; }
+h1 { margin: 0; max-width: 100%; font-size: clamp(40px, 12.5vw, 80px); line-height: 1.03; letter-spacing: -.075em; font-weight: 500; white-space: nowrap; }
 h1 em { color: var(--cobalt); font-style: normal; }
 .intro { margin: 28px 0 0; color: var(--soft-ink); font-size: 15px; line-height: 1.75; }
 
@@ -52,5 +52,6 @@ h1 em { color: var(--cobalt); font-style: normal; }
 .lightbox { width: min(90vw, 500px); max-height: 90svh; padding: 12px; border: 1px solid var(--ink); background: var(--paper); box-shadow: 12px 12px 0 rgba(0,0,0,.22); overflow-y: auto; }.lightbox::backdrop { background: rgba(18, 16, 12, .66); backdrop-filter: blur(3px); }.lightbox img { display: block; max-width: 100%; max-height: 62svh; margin: 15px auto 8px; }.lightbox p { margin: 0; text-align: center; font-size: 13px; }.close-lightbox { float: right; width: 32px; height: 32px; border: 0; background: var(--ink); color: var(--paper); cursor: pointer; font-size: 23px; line-height: 1; }
 .handwritten-lines { min-height: 5.7em; padding: 12px 10px 4px; color: var(--cobalt); font-family: "Kaiti SC", "STKaiti", "FZKai-Z03", cursive; font-size: clamp(17px, 5vw, 22px); line-height: 1.55; transform: rotate(-1deg); }.handwritten-lines p { min-height: 1.55em; margin: 0; text-align: left; }.handwritten-lines p::after { content: ""; display: inline-block; width: .4em; height: 1px; margin-left: .16em; vertical-align: middle; background: currentColor; opacity: .5; }
 
+@media (max-width: 350px) { h1 { font-size: 11.8vw; letter-spacing: -.09em; } }
 @media (min-width: 680px) { .cards { min-height: 860px; }.poster-card { width: 270px; }.card-b { top: 90px; }.card-c { top: 340px; left: 17%; }.card-d { top: 395px; right: 7%; }.card-e { top: 625px; left: 33%; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; } }

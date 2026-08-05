@@ -75,13 +75,41 @@
   document.querySelector(".close-lightbox").addEventListener("click", () => lightbox.close());
   lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
 
+  function setGalleryMotion() {
+    const cards = Array.from(document.querySelectorAll(".poster-card"));
+    if (reduceMotion || !gsap || !("IntersectionObserver" in window)) {
+      cards.forEach((card) => { card.style.visibility = "visible"; card.style.opacity = "1"; });
+      return;
+    }
+
+    const revealed = new WeakSet();
+    gsap.set(cards, { autoAlpha: 0, y: 34, scale: .96 });
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const card = entry.target;
+        if (entry.isIntersecting) {
+          revealed.add(card);
+          gsap.to(card, { autoAlpha: 1, y: 0, scale: 1, duration: .58, ease: "power3.out", overwrite: "auto" });
+          return;
+        }
+        if (revealed.has(card)) {
+          const direction = entry.boundingClientRect.top < 0 ? -20 : 20;
+          gsap.to(card, { autoAlpha: 0, y: direction, scale: .98, duration: .3, ease: "power1.in", overwrite: "auto" });
+        }
+      });
+    }, { threshold: .2 });
+    cards.forEach((card) => observer.observe(card));
+  }
+
   if (gsap && !reduceMotion) {
-    gsap.set([".masthead", ".hero > *", ".section-heading", ".poster-card", ".note"], { autoAlpha: 0 });
+    gsap.set([".masthead", ".hero > *", ".section-heading", ".note"], { autoAlpha: 0 });
+    setGalleryMotion();
     const timeline = gsap.timeline({ defaults: { ease: "power2.out" } });
     timeline.to(".masthead", { autoAlpha: 1, duration: .35 })
       .to(".hero > *", { autoAlpha: 1, y: 0, duration: .5, stagger: .08 }, "-=.06")
       .to(".section-heading", { autoAlpha: 1, y: 0, duration: .45 }, "-=.05")
-      .to(".poster-card", { autoAlpha: 1, y: 0, duration: .5, stagger: .1 }, "-=.12")
       .to(".note", { autoAlpha: 1, y: 0, duration: .4 }, "-=.15");
+  } else {
+    setGalleryMotion();
   }
 })();
