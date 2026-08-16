@@ -51,23 +51,23 @@
         </div>
 
         <div class="cards">
-          <button class="poster-card card-a" type="button" data-poster="./assets/images/nfc-zine-9920-glass-weather.png" data-label="玻璃天气" data-lines="玻璃映出天气|也映出未说的话|风从指尖经过">
+          <button class="poster-card card-a" type="button" data-tilt="-10" data-poster="./assets/images/nfc-zine-9920-glass-weather.png" data-label="玻璃天气" data-lines="玻璃映出天气|也映出未说的话|风从指尖经过">
             <img src="./assets/images/nfc-zine-9920-glass-weather.png" alt="玻璃天气主题纸刊海报" />
             <span>01 / 玻璃天气</span>
           </button>
-          <button class="poster-card card-b" type="button" data-poster="./assets/images/nfc-zine-9921-last-note.png" data-label="最后一张纸条" data-lines="纸条没有署名|折痕却记得|那一次回头">
+          <button class="poster-card card-b" type="button" data-tilt="8" data-poster="./assets/images/nfc-zine-9921-last-note.png" data-label="最后一张纸条" data-lines="纸条没有署名|折痕却记得|那一次回头">
             <img src="./assets/images/nfc-zine-9921-last-note.png" alt="最后一张纸条主题纸刊海报" />
             <span>02 / 最后一张纸条</span>
           </button>
-          <button class="poster-card card-c" type="button" data-poster="./assets/images/nfc-zine-9922-turning-back.png" data-label="回望的瞬间" data-lines="我们没有停下|只是回头看了一眼|夜就亮了">
+          <button class="poster-card card-c" type="button" data-tilt="-4" data-poster="./assets/images/nfc-zine-9922-turning-back.png" data-label="回望的瞬间" data-lines="我们没有停下|只是回头看了一眼|夜就亮了">
             <img src="./assets/images/nfc-zine-9922-turning-back.png" alt="回望的瞬间主题纸刊海报" />
             <span>03 / 回望</span>
           </button>
-          <button class="poster-card card-d" type="button" data-poster="./assets/images/nfc-zine-9923-quiet-stage.png" data-label="安静的舞台" data-lines="灯光落下以后|舞台仍然安静|像一封没有寄出的信">
+          <button class="poster-card card-d" type="button" data-tilt="11" data-poster="./assets/images/nfc-zine-9923-quiet-stage.png" data-label="安静的舞台" data-lines="灯光落下以后|舞台仍然安静|像一封没有寄出的信">
             <img src="./assets/images/nfc-zine-9923-quiet-stage.png" alt="安静的舞台主题纸刊海报" />
             <span>04 / 安静的舞台</span>
           </button>
-          <button class="poster-card card-e" type="button" data-poster="./assets/images/nfc-zine-9924-blue-between-words.png" data-label="词语之间的蓝" data-lines="词语之间有蓝色|它不急着开口|只等你靠近">
+          <button class="poster-card card-e" type="button" data-tilt="-8" data-poster="./assets/images/nfc-zine-9924-blue-between-words.png" data-label="词语之间的蓝" data-lines="词语之间有蓝色|它不急着开口|只等你靠近">
             <img src="./assets/images/nfc-zine-9924-blue-between-words.png" alt="词语之间的蓝主题纸刊海报" />
             <span>05 / 词语之间的蓝</span>
           </button>
@@ -82,9 +82,20 @@
 
     <dialog class="lightbox" aria-label="海报预览">
       <button class="close-lightbox" type="button" aria-label="关闭预览">×</button>
-      <img src="" alt="" />
-      <p></p>
-      <div class="handwritten-lines" aria-live="polite" aria-label="手写文字逐行显示"></div>
+      <button class="photo-stage" type="button" aria-label="翻到照片背面并显示三行文字" aria-pressed="false">
+        <span class="photo-inner">
+          <span class="photo-face photo-front">
+            <img class="lightbox-front-image" src="" alt="" />
+            <span class="photo-front-label"></span>
+          </span>
+          <span class="photo-face photo-back">
+            <img class="lightbox-back-image" src="" alt="" />
+            <span class="photo-back-label"></span>
+            <span class="handwritten-lines" aria-live="polite" aria-label="三行文字逐字显示"></span>
+          </span>
+        </span>
+      </button>
+      <p class="mode-guide" aria-live="polite"><span aria-hidden="true"></span>点击照片 · 翻到背面</p>
     </dialog>
 
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>

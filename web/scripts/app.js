@@ -7,9 +7,14 @@
   const trackTicker = document.querySelector(".track-ticker");
   const trackName = document.querySelector(".track-name");
   const lightbox = document.querySelector(".lightbox");
-  const lightboxImage = lightbox.querySelector("img");
-  const lightboxLabel = lightbox.querySelector("p");
+  const photoStage = lightbox.querySelector(".photo-stage");
+  const photoInner = lightbox.querySelector(".photo-inner");
+  const frontImage = lightbox.querySelector(".lightbox-front-image");
+  const backImage = lightbox.querySelector(".lightbox-back-image");
+  const frontLabel = lightbox.querySelector(".photo-front-label");
+  const backLabel = lightbox.querySelector(".photo-back-label");
   const handwrittenLines = lightbox.querySelector(".handwritten-lines");
+  const modeGuide = lightbox.querySelector(".mode-guide");
   const playlist = [
     "./assets/music/I Will Follow You.mp3"
   ];
@@ -19,6 +24,11 @@
   audio.preload = "metadata";
   audio.volume = .7;
   let writingTimeline = null;
+  let openTimeline = null;
+  let flipTimeline = null;
+  let guideTween = null;
+  let currentLines = [];
+  let showingBack = false;
 
   function titleFromFilename(path) {
     const filename = decodeURIComponent(path.split("/").pop() || path);
@@ -87,7 +97,8 @@
     if (writingTimeline) writingTimeline.kill();
     handwrittenLines.replaceChildren();
     const lineElements = lines.map(() => {
-      const element = document.createElement("p");
+      const element = document.createElement("span");
+      element.className = "handwritten-line";
       handwrittenLines.append(element);
       return element;
     });
@@ -107,17 +118,96 @@
     });
   }
 
+  function updateModeGuide() {
+    modeGuide.lastChild.textContent = showingBack ? "点击照片 · 返回大图" : "点击照片 · 翻到背面";
+    photoStage.setAttribute("aria-pressed", String(showingBack));
+    photoStage.setAttribute("aria-label", showingBack ? "返回照片大图展示" : "翻到照片背面并显示三行文字");
+  }
+
+  function startGuidePulse() {
+    if (guideTween) guideTween.kill();
+    if (!gsap || reduceMotion) return;
+    guideTween = gsap.to(modeGuide, {
+      autoAlpha: .42,
+      scale: .985,
+      duration: 1.15,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+      transformOrigin: "50% 50%"
+    });
+  }
+
+  function resetPhotoSide() {
+    showingBack = false;
+    currentLines = [];
+    handwrittenLines.replaceChildren();
+    if (writingTimeline) writingTimeline.kill();
+    if (flipTimeline) flipTimeline.kill();
+    if (gsap) gsap.set(photoInner, { rotationY: 0 });
+    else photoInner.style.transform = "rotateY(0deg)";
+    updateModeGuide();
+  }
+
+  function togglePhotoSide() {
+    showingBack = !showingBack;
+    const turningToBack = showingBack;
+    updateModeGuide();
+    if (writingTimeline) writingTimeline.kill();
+    handwrittenLines.replaceChildren();
+
+    if (!gsap || reduceMotion) {
+      photoInner.style.transform = `rotateY(${turningToBack ? 180 : 0}deg)`;
+      if (turningToBack) writeLines(currentLines);
+      return;
+    }
+
+    if (flipTimeline) flipTimeline.kill();
+    flipTimeline = gsap.timeline({
+      defaults: { ease: "power3.inOut" },
+      onComplete: () => { if (turningToBack) writeLines(currentLines); }
+    });
+    flipTimeline
+      .to(photoInner, { rotationY: turningToBack ? 180 : 0, duration: .72 })
+      .fromTo(turningToBack ? backImage : frontImage,
+        { autoAlpha: .55, scale: .88 },
+        { autoAlpha: 1, scale: 1, duration: .34, ease: "power2.out" },
+        "-=.24");
+  }
+
   document.querySelectorAll(".poster-card").forEach((card) => {
     card.addEventListener("click", () => {
-      lightboxImage.src = card.dataset.poster;
-      lightboxImage.alt = card.querySelector("img").alt;
-      lightboxLabel.textContent = card.dataset.label;
+      const imageAlt = card.querySelector("img").alt;
+      frontImage.src = card.dataset.poster;
+      frontImage.alt = imageAlt;
+      backImage.src = card.dataset.poster;
+      backImage.alt = `${imageAlt}缩略图`;
+      frontLabel.textContent = card.dataset.label;
+      backLabel.textContent = card.dataset.label;
+      resetPhotoSide();
+      currentLines = card.dataset.lines.split("|");
       lightbox.showModal();
-      writeLines(card.dataset.lines.split("|"));
-      if (gsap && !reduceMotion) gsap.fromTo(lightboxImage, { autoAlpha: 0, scale: .96 }, { autoAlpha: 1, scale: 1, duration: .32, ease: "power2.out" });
+      if (gsap && !reduceMotion) {
+        if (openTimeline) openTimeline.kill();
+        openTimeline = gsap.timeline({ defaults: { ease: "power3.out" }, onComplete: startGuidePulse });
+        openTimeline
+          .fromTo(lightbox, { autoAlpha: 0, scale: .94 }, { autoAlpha: 1, scale: 1, duration: .32 })
+          .fromTo(photoStage,
+            { autoAlpha: 0, y: 42, scale: .76, rotation: -7, rotationY: -34 },
+            { autoAlpha: 1, y: 0, scale: 1, rotation: 0, rotationY: 0, duration: .62, transformOrigin: "50% 100%" },
+            0)
+          .fromTo(modeGuide, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .28 }, "-=.14");
+      } else startGuidePulse();
     });
   });
-  lightbox.addEventListener("close", () => { if (writingTimeline) writingTimeline.kill(); });
+  photoStage.addEventListener("click", togglePhotoSide);
+  lightbox.addEventListener("close", () => {
+    if (writingTimeline) writingTimeline.kill();
+    if (openTimeline) openTimeline.kill();
+    if (flipTimeline) flipTimeline.kill();
+    if (guideTween) guideTween.kill();
+    gsap?.set([lightbox, photoStage, modeGuide], { clearProps: "all" });
+  });
   document.querySelector(".close-lightbox").addEventListener("click", () => lightbox.close());
   lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
 
@@ -129,7 +219,7 @@
     }
 
     const revealed = new WeakSet();
-    gsap.set(cards, { autoAlpha: 0, y: 34, scale: .96 });
+    gsap.set(cards, { autoAlpha: 0, y: 34, scale: .96, rotation: (index, card) => Number(card.dataset.tilt) });
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         const card = entry.target;
