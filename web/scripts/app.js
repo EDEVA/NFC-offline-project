@@ -7,6 +7,7 @@
   const trackTicker = document.querySelector(".track-ticker");
   const trackName = document.querySelector(".track-name");
   const lightbox = document.querySelector(".lightbox");
+  const closeLightbox = lightbox.querySelector(".close-lightbox");
   const photoStage = lightbox.querySelector(".photo-stage");
   const frontFace = lightbox.querySelector(".photo-front");
   const backFace = lightbox.querySelector(".photo-back");
@@ -31,6 +32,12 @@
   let currentLines = [];
   let showingBack = false;
   let flipLocked = false;
+  let openScrollX = 0;
+  let openScrollY = 0;
+
+  function restoreOpenScrollPosition() {
+    window.scrollTo(openScrollX, openScrollY);
+  }
 
   function titleFromFilename(path) {
     const filename = decodeURIComponent(path.split("/").pop() || path);
@@ -199,7 +206,12 @@
       backLabel.textContent = card.dataset.label;
       resetPhotoSide();
       currentLines = card.dataset.lines.split("|");
+      openScrollX = window.scrollX;
+      openScrollY = window.scrollY;
       lightbox.showModal();
+      closeLightbox.focus({ preventScroll: true });
+      restoreOpenScrollPosition();
+      requestAnimationFrame(restoreOpenScrollPosition);
       if (gsap && !reduceMotion) {
         if (openTimeline) openTimeline.kill();
         openTimeline = gsap.timeline({ defaults: { ease: "power3.out" }, onComplete: startGuidePulse });
@@ -221,8 +233,10 @@
     if (guideTween) guideTween.kill();
     flipLocked = false;
     gsap?.set([lightbox, photoStage, modeGuide, frontFace, backFace], { clearProps: "all" });
+    restoreOpenScrollPosition();
+    requestAnimationFrame(restoreOpenScrollPosition);
   });
-  document.querySelector(".close-lightbox").addEventListener("click", () => lightbox.close());
+  closeLightbox.addEventListener("click", () => lightbox.close());
   lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
 
   function setGalleryMotion() {
