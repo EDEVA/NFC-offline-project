@@ -62,12 +62,13 @@ h1 em { color: var(--cobalt); font-style: normal; }
 .note { margin-bottom: 42px; padding-block: 31px 42px; border-top: 1px solid rgba(30,29,26,.2); }.handwriting { margin: 0 0 22px; font-family: "Kaiti SC", "STKaiti", cursive; color: var(--cobalt); font-size: 29px; transform: rotate(-2deg); }.note p:last-child { max-width: 35em; margin: 0; color: var(--soft-ink); font-size: 12px; line-height: 1.8; }
 
 .lightbox { position: relative; width: min(92vw, 540px); max-height: 92svh; padding: 44px 14px 14px; border: 1px solid var(--ink); background: var(--paper); box-shadow: 12px 12px 0 rgba(0,0,0,.22); overflow: hidden; }.lightbox::backdrop { background: rgba(18, 16, 12, .7); backdrop-filter: blur(4px); }.close-lightbox { position: absolute; z-index: 10; top: 9px; right: 9px; width: 32px; height: 32px; border: 0; background: var(--ink); color: var(--paper); cursor: pointer; font-size: 23px; line-height: 1; }.close-lightbox:focus-visible, .photo-stage:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 3px; }
-.photo-stage { display: block; width: 100%; padding: 0; border: 0; color: var(--ink); background: none; cursor: pointer; perspective: 1300px; }
-.photo-inner { display: grid; min-height: min(69svh, 650px); transform-style: preserve-3d; will-change: transform; }
-.photo-face { grid-area: 1 / 1; display: grid; align-content: center; justify-items: center; width: 100%; min-height: 100%; padding: 8px; border: 1px solid rgba(30,29,26,.16); background: #f2ead9; box-shadow: 5px 6px 0 rgba(30,29,26,.14); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.photo-stage { display: block; width: 100%; padding: 0; border: 0; color: var(--ink); background: none; cursor: pointer; perspective: 1300px; -webkit-perspective: 1300px; }
+.photo-inner { display: grid; min-height: min(69svh, 650px); }
+.photo-face { grid-area: 1 / 1; display: grid; align-content: center; justify-items: center; width: 100%; min-height: 100%; padding: 8px; border: 1px solid rgba(30,29,26,.16); background: #f2ead9; box-shadow: 5px 6px 0 rgba(30,29,26,.14); transform-origin: 50% 50%; will-change: transform, opacity; }
+.photo-face[hidden] { display: none; }
 .photo-front img { display: block; width: auto; max-width: 100%; max-height: 62svh; object-fit: contain; }
 .photo-front-label, .photo-back-label { display: block; width: 100%; padding: 9px 3px 2px; text-align: center; font: 9px/1 ui-monospace, monospace; letter-spacing: .12em; }
-.photo-back { transform: rotateY(180deg); background-image: radial-gradient(rgba(73,52,20,.1) .45px, transparent .6px); background-size: 6px 6px; }
+.photo-back { background-image: radial-gradient(rgba(73,52,20,.1) .45px, transparent .6px); background-size: 6px 6px; }
 .photo-back img { display: block; width: 66.666%; max-height: 43svh; object-fit: contain; box-shadow: 3px 4px 0 rgba(30,29,26,.13); }
 .handwritten-lines { display: block; width: 100%; min-height: 5.5em; padding: 12px 10px 2px; color: var(--cobalt); font-family: "Kaiti SC", "STKaiti", "FZKai-Z03", cursive; font-size: clamp(17px, 5vw, 22px); line-height: 1.5; text-align: left; transform: rotate(-1deg); }
 .handwritten-line { display: block; min-height: 1.5em; }.handwritten-line::after { content: ""; display: inline-block; width: .4em; height: 1px; margin-left: .16em; vertical-align: middle; background: currentColor; opacity: .5; }

@@ -8,7 +8,8 @@
   const trackName = document.querySelector(".track-name");
   const lightbox = document.querySelector(".lightbox");
   const photoStage = lightbox.querySelector(".photo-stage");
-  const photoInner = lightbox.querySelector(".photo-inner");
+  const frontFace = lightbox.querySelector(".photo-front");
+  const backFace = lightbox.querySelector(".photo-back");
   const frontImage = lightbox.querySelector(".lightbox-front-image");
   const backImage = lightbox.querySelector(".lightbox-back-image");
   const frontLabel = lightbox.querySelector(".photo-front-label");
@@ -29,6 +30,7 @@
   let guideTween = null;
   let currentLines = [];
   let showingBack = false;
+  let flipLocked = false;
 
   function titleFromFilename(path) {
     const filename = decodeURIComponent(path.split("/").pop() || path);
@@ -140,39 +142,50 @@
 
   function resetPhotoSide() {
     showingBack = false;
+    flipLocked = false;
     currentLines = [];
     handwrittenLines.replaceChildren();
     if (writingTimeline) writingTimeline.kill();
     if (flipTimeline) flipTimeline.kill();
-    if (gsap) gsap.set(photoInner, { rotationY: 0 });
-    else photoInner.style.transform = "rotateY(0deg)";
+    frontFace.hidden = false;
+    backFace.hidden = true;
+    if (gsap) gsap.set([frontFace, backFace], { clearProps: "all" });
     updateModeGuide();
   }
 
   function togglePhotoSide() {
+    if (flipLocked) return;
+    flipLocked = true;
     showingBack = !showingBack;
     const turningToBack = showingBack;
+    const outgoingFace = turningToBack ? frontFace : backFace;
+    const incomingFace = turningToBack ? backFace : frontFace;
+    const direction = turningToBack ? 1 : -1;
     updateModeGuide();
     if (writingTimeline) writingTimeline.kill();
     handwrittenLines.replaceChildren();
 
     if (!gsap || reduceMotion) {
-      photoInner.style.transform = `rotateY(${turningToBack ? 180 : 0}deg)`;
+      outgoingFace.hidden = true;
+      incomingFace.hidden = false;
+      flipLocked = false;
       if (turningToBack) writeLines(currentLines);
       return;
     }
 
     if (flipTimeline) flipTimeline.kill();
+    incomingFace.hidden = false;
+    gsap.set(incomingFace, { autoAlpha: 0, rotationY: direction * 72, scale: .96 });
     flipTimeline = gsap.timeline({
-      defaults: { ease: "power3.inOut" },
-      onComplete: () => { if (turningToBack) writeLines(currentLines); }
+      onComplete: () => {
+        flipLocked = false;
+        if (turningToBack) writeLines(currentLines);
+      }
     });
     flipTimeline
-      .to(photoInner, { rotationY: turningToBack ? 180 : 0, duration: .72 })
-      .fromTo(turningToBack ? backImage : frontImage,
-        { autoAlpha: .55, scale: .88 },
-        { autoAlpha: 1, scale: 1, duration: .34, ease: "power2.out" },
-        "-=.24");
+      .to(outgoingFace, { autoAlpha: 0, rotationY: direction * -72, scale: .96, duration: .28, ease: "power2.in" })
+      .add(() => { outgoingFace.hidden = true; })
+      .to(incomingFace, { autoAlpha: 1, rotationY: 0, scale: 1, duration: .38, ease: "power3.out" });
   }
 
   document.querySelectorAll(".poster-card").forEach((card) => {
@@ -193,8 +206,8 @@
         openTimeline
           .fromTo(lightbox, { autoAlpha: 0, scale: .94 }, { autoAlpha: 1, scale: 1, duration: .32 })
           .fromTo(photoStage,
-            { autoAlpha: 0, y: 42, scale: .76, rotation: -7, rotationY: -34 },
-            { autoAlpha: 1, y: 0, scale: 1, rotation: 0, rotationY: 0, duration: .62, transformOrigin: "50% 100%" },
+            { autoAlpha: 0, y: 42, scale: .76, rotation: -7, rotationX: -12 },
+            { autoAlpha: 1, y: 0, scale: 1, rotation: 0, rotationX: 0, duration: .62, transformOrigin: "50% 100%" },
             0)
           .fromTo(modeGuide, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: .28 }, "-=.14");
       } else startGuidePulse();
@@ -206,7 +219,8 @@
     if (openTimeline) openTimeline.kill();
     if (flipTimeline) flipTimeline.kill();
     if (guideTween) guideTween.kill();
-    gsap?.set([lightbox, photoStage, modeGuide], { clearProps: "all" });
+    flipLocked = false;
+    gsap?.set([lightbox, photoStage, modeGuide, frontFace, backFace], { clearProps: "all" });
   });
   document.querySelector(".close-lightbox").addEventListener("click", () => lightbox.close());
   lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
