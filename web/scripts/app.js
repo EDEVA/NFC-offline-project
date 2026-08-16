@@ -11,9 +11,7 @@
   const lightboxLabel = lightbox.querySelector("p");
   const handwrittenLines = lightbox.querySelector(".handwritten-lines");
   const playlist = [
-    "./assets/music/蓝色时刻.wav",
-    "./assets/music/纸上晨光.wav",
-    "./assets/music/静默岛屿.wav"
+    "./assets/music/I Will Follow You.mp3"
   ];
   const audio = new Audio();
   let currentTrackIndex = 0;
