@@ -2,19 +2,56 @@
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const gsap = window.gsap;
   const player = document.querySelector(".sound-control");
+  const previousTrack = document.querySelector(".previous-track");
+  const nextTrack = document.querySelector(".next-track");
+  const trackTicker = document.querySelector(".track-ticker");
+  const trackName = document.querySelector(".track-name");
   const lightbox = document.querySelector(".lightbox");
   const lightboxImage = lightbox.querySelector("img");
   const lightboxLabel = lightbox.querySelector("p");
   const handwrittenLines = lightbox.querySelector(".handwritten-lines");
-  const audio = new Audio("./assets/music/obj_wo3DlMOGwrbDjj7DisKw_32743712864_3f09_5c7e_7a96_9c7cd9bf51fa18a6af1464f8c3b061a0.mp3");
-  audio.loop = true;
+  const playlist = [
+    "./assets/music/蓝色时刻.wav",
+    "./assets/music/纸上晨光.wav",
+    "./assets/music/静默岛屿.wav"
+  ];
+  const audio = new Audio();
+  let currentTrackIndex = 0;
+  audio.loop = false;
   audio.preload = "metadata";
   audio.volume = .7;
   let writingTimeline = null;
 
+  function titleFromFilename(path) {
+    const filename = decodeURIComponent(path.split("/").pop() || path);
+    return filename.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ");
+  }
+
+  function updateTrackDisplay() {
+    const title = titleFromFilename(playlist[currentTrackIndex]);
+    trackName.textContent = title;
+    trackTicker.setAttribute("aria-label", `当前歌曲：${title}`);
+    trackTicker.title = title;
+  }
+
+  function selectTrack(index, shouldPlay = player.getAttribute("aria-pressed") === "true") {
+    currentTrackIndex = (index + playlist.length) % playlist.length;
+    audio.src = playlist[currentTrackIndex];
+    audio.load();
+    updateTrackDisplay();
+    if (shouldPlay) {
+      audio.play().catch((error) => {
+        setSound(false);
+        player.setAttribute("aria-label", "当前音乐无法播放");
+        console.warn("Selected track could not play.", error);
+      });
+    }
+  }
+
   function setSound(playing) {
     player.setAttribute("aria-pressed", String(playing));
-    player.setAttribute("aria-label", playing ? "暂停临时背景音乐" : "播放临时背景音乐");
+    const title = titleFromFilename(playlist[currentTrackIndex]);
+    player.setAttribute("aria-label", playing ? `暂停 ${title}` : `播放 ${title}`);
     player.querySelector("b").textContent = playing ? "PAUSE" : "PLAY";
     if (gsap && !reduceMotion) gsap.to(".sound-disc", { rotation: playing ? "+=360" : 0, duration: playing ? 7 : .25, ease: "none", repeat: playing ? -1 : 0, overwrite: true });
   }
@@ -30,12 +67,23 @@
       await audio.play();
       setSound(true);
     } catch (error) {
-      player.setAttribute("aria-label", "临时背景音乐无法播放");
-      console.warn("Temporary BGM could not play.", error);
+      player.setAttribute("aria-label", "当前音乐无法播放");
+      console.warn("Current track could not play.", error);
     }
   });
 
+  previousTrack.addEventListener("click", () => selectTrack(currentTrackIndex - 1));
+  nextTrack.addEventListener("click", () => selectTrack(currentTrackIndex + 1));
+
+  audio.addEventListener("play", () => setSound(true));
   audio.addEventListener("pause", () => { if (!audio.ended) setSound(false); });
+  audio.addEventListener("ended", () => selectTrack(currentTrackIndex + 1, true));
+  audio.addEventListener("error", () => {
+    setSound(false);
+    player.setAttribute("aria-label", "当前音乐无法加载");
+  });
+
+  selectTrack(0, false);
 
   function writeLines(lines) {
     if (writingTimeline) writingTimeline.kill();

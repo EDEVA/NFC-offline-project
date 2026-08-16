@@ -20,10 +20,24 @@
         <h1 id="page-title">我曾經幻想過<br/>無數可能<br /><em>與你住在海邊<br/>吹山間的風</em></h1>
         <p class="intro">轻触一张卡，翻开一段留白。<br />这里的每一次播放，都从你开始。</p>
 
-        <button class="sound-control" type="button" aria-pressed="false" aria-label="播放临时背景音乐">
-          <span class="sound-disc" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="sound-copy"><b>PLAY</b></span>
-        </button>
+        <div class="audio-player" aria-label="音乐播放器">
+          <div class="player-controls">
+            <button class="track-control previous-track" type="button" aria-label="播放上一曲">
+              <span aria-hidden="true">←</span><small>PREV</small>
+            </button>
+            <button class="sound-control" type="button" aria-pressed="false" aria-label="播放当前音乐">
+              <span class="sound-disc" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="sound-copy"><b>PLAY</b></span>
+            </button>
+            <button class="track-control next-track" type="button" aria-label="播放下一曲">
+              <span aria-hidden="true">→</span><small>NEXT</small>
+            </button>
+          </div>
+          <div class="track-ticker" aria-live="polite">
+            <span class="track-kicker">NOW PLAYING</span>
+            <span class="track-marquee"><span class="track-name"></span></span>
+          </div>
+        </div>
         <!-- <p class="audio-note">占位音频：本地临时 BGM。获授权后替换为《照片》。</p> -->
       </section>
 
