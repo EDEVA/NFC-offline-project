@@ -19,6 +19,7 @@
   const modeGuide = lightbox.querySelector(".mode-guide");
   const cards = Array.from(document.querySelectorAll(".poster-card"));
   const playlist = cards.map((card) => card.dataset.track);
+  const mediaArtwork = new URL("./assets/icons/sunflower-cover-512.png?v=20260817", document.baseURI).href;
   const audio = new Audio();
   let currentTrackIndex = 0;
   audio.loop = true;
@@ -48,6 +49,14 @@
     trackName.textContent = title;
     trackTicker.setAttribute("aria-label", `当前歌曲：${title}`);
     trackTicker.title = title;
+    if ("mediaSession" in navigator && "MediaMetadata" in window) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: cards[currentTrackIndex].dataset.label,
+        artist: "单依纯",
+        album: "蛋島留念 · NFC 數字小刊",
+        artwork: [{ src: mediaArtwork, sizes: "512x512", type: "image/png" }]
+      });
+    }
   }
 
   function selectTrack(index, shouldPlay = player.getAttribute("aria-pressed") === "true") {
@@ -69,7 +78,21 @@
     const title = titleFromFilename(playlist[currentTrackIndex]);
     player.setAttribute("aria-label", playing ? `暂停 ${title}` : `播放 ${title}`);
     player.querySelector("b").textContent = playing ? "PAUSE" : "PLAY";
+    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = playing ? "playing" : "paused";
     if (gsap && !reduceMotion) gsap.to(".sound-disc", { rotation: playing ? "+=360" : 0, duration: playing ? 7 : .25, ease: "none", repeat: playing ? -1 : 0, overwrite: true });
+  }
+
+  if ("mediaSession" in navigator) {
+    const mediaActions = {
+      play: () => audio.play(),
+      pause: () => audio.pause(),
+      previoustrack: () => selectTrack(currentTrackIndex - 1, true),
+      nexttrack: () => selectTrack(currentTrackIndex + 1, true)
+    };
+    Object.entries(mediaActions).forEach(([action, handler]) => {
+      try { navigator.mediaSession.setActionHandler(action, handler); }
+      catch (error) { console.debug(`Media Session action not supported: ${action}`, error); }
+    });
   }
 
   player.addEventListener("click", async () => {
