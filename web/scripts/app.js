@@ -195,7 +195,7 @@
 
   cards.forEach((card, trackIndex) => {
     card.addEventListener("click", () => {
-      if (trackIndex !== currentTrackIndex) selectTrack(trackIndex);
+      selectTrack(trackIndex, true);
       const imageAlt = card.querySelector("img").alt;
       frontImage.src = card.dataset.poster;
       frontImage.alt = imageAlt;
