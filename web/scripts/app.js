@@ -17,12 +17,11 @@
   const backLabel = lightbox.querySelector(".photo-back-label");
   const handwrittenLines = lightbox.querySelector(".handwritten-lines");
   const modeGuide = lightbox.querySelector(".mode-guide");
-  const playlist = [
-    "./assets/music/I Will Follow You.mp3"
-  ];
+  const cards = Array.from(document.querySelectorAll(".poster-card"));
+  const playlist = cards.map((card) => card.dataset.track);
   const audio = new Audio();
   let currentTrackIndex = 0;
-  audio.loop = false;
+  audio.loop = true;
   audio.preload = "metadata";
   audio.volume = .7;
   let writingTimeline = null;
@@ -94,7 +93,6 @@
 
   audio.addEventListener("play", () => setSound(true));
   audio.addEventListener("pause", () => { if (!audio.ended) setSound(false); });
-  audio.addEventListener("ended", () => selectTrack(currentTrackIndex + 1, true));
   audio.addEventListener("error", () => {
     setSound(false);
     player.setAttribute("aria-label", "当前音乐无法加载");
@@ -195,8 +193,9 @@
       .to(incomingFace, { autoAlpha: 1, rotationY: 0, scale: 1, duration: .38, ease: "power3.out" });
   }
 
-  document.querySelectorAll(".poster-card").forEach((card) => {
+  cards.forEach((card, trackIndex) => {
     card.addEventListener("click", () => {
+      if (trackIndex !== currentTrackIndex) selectTrack(trackIndex);
       const imageAlt = card.querySelector("img").alt;
       frontImage.src = card.dataset.poster;
       frontImage.alt = imageAlt;
@@ -240,7 +239,6 @@
   lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
 
   function setGalleryMotion() {
-    const cards = Array.from(document.querySelectorAll(".poster-card"));
     if (reduceMotion || !gsap || !("IntersectionObserver" in window)) {
       cards.forEach((card) => { card.style.visibility = "visible"; card.style.opacity = "1"; });
       return;
